@@ -1,0 +1,34 @@
+一.处理用户登录功能的示例
+1.在service.impl包下创建处理某一类服务的类,
+例如处理用户登录,登出等功能的这些类可以叫做UserService,这些类都统一继承JdbcSupport类,
+在UserService类中重写queryForMap, queryForList, update方法在其中编写sql语句,获取需要的参数,然后调用父类中的处理方法:比如
+单例查询的通用实现方法 singleQuery(String sql, Object...args)将SQL语句和参数传递进去,然后返回该方法的返回结果.
+用户登录功能我们是根据用户名与密码查询记录,预期查询结果只有一个,所以重写queryForMap方法,多个的话重写queryForList,更新操作重写
+update方法
+那么queryForMap方法中的代码
+//编写sql语句 
+String sql = "select * from t_us where us_name = ? and us_pwd = ?";
+//然后我需要两个参数为?占位符赋值
+//获取用户名 
+Object userName = this.getVal("us_name"); //getVal(String key)方法用以直接获取页面传递过来的数据,key为页面控件的name值
+//获取密码
+Object password = this.getVal("us_pwd");
+//预期查询结果只有一个,调用父类中的单例查询的通用实现方法singeQuery,传入SQL语句和参数,然后直接返回其结果
+return this.singleQuery(sql, userName, password);
+
+2.在servlet.impl包下创建一个对服务类(UserService)进行辅助的抽象类比如UserServiceSupport,该类继承ControllerSupport,
+该类中只有构造方法,在构造方法中对该类父类中的一个成员变量-BaseService接口进行实例化, 格式为: this.baseService = new UserService();
+new的子类为刚刚创建的那个类, 那个类中存在着我们编写好的处理后台数据的方法
+
+3.在servlet.impl包下的自己名字对应的包中创建一个类例如UserLogin,该类主要用以调用在UserService编写好的方法然后根据对调用方法
+返回结果的判读决定下一步的流程, 这些类根据所要执行的操作继承之前创建的对应的抽象类,例如UserLogin类型是处理用户登录的,属于处理用户服务的
+那么继承自UserServiceSupport, 该类中只有一个方法-重写的execute方法,该方法中决定调用UserService中编写好的哪个方法,比如登录操作
+是根据用户名和密码查询记录,然后该方法:单例查询的方法queryForMap()已经在UserService中进行了实现,那么直接调用,通过父类中的baseService对象完成对UserService中
+方法的调用, 格式: this.baseService.queryForMap(); 然后接收其返回值,根据返回值对整个操作接下来的流程进行处理,比如我获取到的
+Map集合不为空且有数据,那么就有这个用户,我让他接下来跳转到首页main页面,只需在execute方法中返回要跳转的页面名比如:"man"即可,execute方法的返回值
+默认情况下为要跳转的页面的名字.
+
+4.页面想要访问对应进行处理的servlet只需要在请求路径中的为该类类名添加前缀与后缀即可, 比如我要访问servlet.impl.lx包下的处理用户
+登录的类UserLogin, 那么我form表单中的action可以这样写: <form action="/crm/lx_UserLogin.do" method="">
+action中的路径第一个 / 后的字母为项目名, 第二个斜杠/ 与 下划线 _ 之间的字母为目标类在servlet.impl.包名 的名字, 下划线_后的字母
+为目标类的类名,最后再在类名后添加后缀 .do即可

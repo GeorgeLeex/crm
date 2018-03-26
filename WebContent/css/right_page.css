@@ -1,0 +1,117 @@
+*{
+	padding: 0;
+	margin: 0;
+}
+
+#right{
+	background-color: #F1F1F1;
+	display: inline-block;
+	margin: 0;
+	position: fixed;
+}
+
+#breadcrumb{
+	/*margin-top: 50px;*/
+	/*height: 50px;*/
+	padding-left: 82px;
+}
+
+.breadcrumb span{
+	font-size: large;
+}
+
+#label01{
+	vertical-align: middle;
+	font-size: 16px;
+}
+
+#table01{
+	width: 1000px;
+	margin: 50px  auto;
+}
+
+#table02{
+	width: 1000px;
+	margin: 50px auto;
+}
+
+.input1{
+	border-radius: 4px;
+}
+
+.input2{
+	width: 165px;
+	height: 34px;
+	padding: 6px 12px;
+	font-size: 14px;
+	line-height: 1.42857143;
+	color: #555;
+	background-color: #fff;
+	background-image: none;
+	border: 1px solid #ccc;
+	border-radius: 4px;
+}
+
+td,th{
+	text-align: center;
+}
+
+#resetButton{
+	margin-left: 73%;
+}
+
+#submitButton{
+	float: right;
+}
+
+.operation1 a:hover{
+	text-decoration: none;
+}
+
+.span1{
+		 font-size: 18px;
+		 padding: 0 8px;
+}
+
+#planeForm{
+	margin-top: 10px;
+	margin-left: 80px;
+}
+
+#button1{
+	float: right;
+	margin-right: 200px;
+}
+
+.importantInput{
+	display: inline-block;
+	width: 98% !important;
+}
+
+.importantTag{
+	color: red;
+	vertical-align: middle;
+}
+
+#p2{
+	font-size: 18px;
+	text-align: center;
+	color: red;
+}
+
+#body {
+	width: 1166px;
+	height: 572px;
+	background-color: #F1F1F1;
+	display: inline-block;
+}
+
+.xx {
+	color: red;
+}
+
+#b2 a {
+	font-size: 16px;
+	font-family: "微软雅黑";
+	font-weight: 100;
+}

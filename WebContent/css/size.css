@@ -1,0 +1,14 @@
+@CHARSET "UTF-8";
+.size{
+	/*  1366*768   */
+	/* width:1223px;
+	height:877px; */
+	
+	/*  1920*1080   */
+	width:1649px;
+	height:877px;
+	
+	/*  1600*900   */
+	/* width: 1400px;
+	height: 728px; */
+}

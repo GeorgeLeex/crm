@@ -1,0 +1,148 @@
+//序列表
+create table sequence(
+       sno number(10) primary key,
+       sname varchar2(30),
+       svalue varchar2(20),
+       sdate date default sysdate
+);
+
+//菜单流水号
+create sequence sq_menu_no;
+
+//销售表流水号
+create sequence seq_xs_no;
+
+//客户表流水号
+create sequence seq_kh_no;
+
+//联系人流水号
+CREATE SEQUENCE seq_lxr_no;
+
+//交往记录流水号
+CREATE SEQUENCE seq_jw_no;
+
+//数据字典流水号
+CREATE SEQUENCE seq_zd_no;
+
+//商品存放记录编号流水号
+CREATE SEQUENCE seq_cf_no START WITH 8;
+
+//序列表流水号
+CREATE SEQUENCE seq_sequence_sno;
+
+//订单明细表流水号
+CREATE SEQUENCE seq_dd_no START WITH 404;
+
+//客户流失记录表流水号
+CREATE SEQUENCE seq_khls_no START WITH 3;
+
+//访问权限记录表流水号
+CREATE SEQUENCE seq_t_access_no
+
+//客户视图
+CREATE OR REPLACE VIEW v_kh
+AS
+SELECT k.kh_no, k.kh02, k.kh03, u.us_no, u.name, d.dj_no, d.dj_name, p.px_no, p.px_name, x.xy_no, x.xy_name, k.kh08, k.kh09, k.kh10,
+       k.kh11, k.kh12, k.kh13, k.kh14, k.kh15, k.kh16, k.kh17, k.kh18, k.kh19, k.kh20, k.state
+    FROM t_kh k, t_us u, t_dj d, t_px p, t_xy x 
+  WHERE  k.us_no = u.us_no (+)
+    AND  k.dj_no = d.dj_no(+)
+    AND  k.px_no = p.px_no(+)
+    AND  k.xy_no = x.xy_no(+)
+    
+//联系人视图    
+create or replace view v_lxr 
+as
+select lxr.lxr_no, kh.kh_no, kh.kh02,lxr.lxr03,lxr.lxr04,lxr.lxr05,lxr.lxr06,lxr.lxr07,lxr.lxr08, lxr.state  
+    from t_lxr lxr,t_kh kh
+  where  lxr.kh_no(+)=kh.kh_no
+  
+//交往记录视图
+CREATE VIEW v_jw
+AS
+SELECT j.jw_no, j.kh_no, k.kh02, j.jw03, j.jw04, j.jw05, j.jw06, j.jw07, j.state
+    FROM t_jw j, t_kh k 
+  WHERE  j.kh_no = k.kh_no(+)
+  
+//历史订单视图
+CREATE OR REPLACE VIEW V_LS AS
+SELECT l.ls_no, k.kh_no, k.kh02, j.jy_no, j.jy_name, l.ls04, l.ls05, l.state
+    FROM t_ls l, t_kh k, t_jy j
+  WHERE  l.kh_no = k.kh_no
+    AND  l.jy_no = j.jy_no;
+    
+//监视订单明细表的触发器
+CREATE OR REPLACE TRIGGER t_cf_cf04
+AFTER
+INSERT
+ON t_dd
+FOR EACH ROW
+DECLARE
+  old_cf04 NUMBER;
+  new_cf04 NUMBER;
+  ex_1 EXCEPTION;
+BEGIN
+  IF inserting THEN
+    SELECT cf04 INTO old_cf04 FROM t_cf WHERE sp_no = :new.sp_no ;
+    IF (old_cf04 - :new.dd04 >= 0) THEN
+       UPDATE t_cf SET cf04 = old_cf04 - :new.dd04 WHERE sp_no = :new.sp_no;
+    ELSE
+       raise_application_error(-20001,'此次购买的商品数量超出了该商品的最大数量');
+    END IF;
+  END IF;
+END;
+
+//监视客户流失记录表,在往客户流失记录表插入记录时为其自动添加主键值,为其后面的定时计划程序往客户流失记录表插入记录时添加主键值,似乎不太必要
+//CREATE OR REPLACE TRIGGER tg_t_khls
+//BEFORE INSERT
+//ON t_khls
+//FOR each ROW
+//BEGIN
+//   IF inserting THEN
+//     SELECT seq_khls_no.nextval INTO :new.khls_no FROM dual;
+//   END IF;
+//END;
+
+//每天12点执行的任务计划
+BEGIN
+  dbms_scheduler.create_schedule(
+       schedule_name => 'schedule1',
+       start_date => SYSDATE,
+       repeat_interval => 'freq=daily;interval=1;byhour=12',
+       comments => 'every day check data when which customer has least 6months not buy ours goods'
+  );
+END;
+
+//查询状态为1:正常且超过六个月没有下过单的客户,将其客户编号和最大下单日期插入客户流失记录表
+BEGIN
+  dbms_scheduler.create_program(
+       program_name => 'program1',
+       program_action => 'DECLARE
+                           khNo number;
+                           ordertime date;
+                           khlsNo NUMBER:=seq_khls_no.nextval;
+                         begin
+                            SELECT DISTINCT k.kh_no,MAX(l.ls04) into khNo,ordertime
+                            FROM t_ls l, t_kh k
+                            WHERE l.kh_no = k.kh_no
+                             AND NOT exists (SELECT b.kh_no FROM t_khls b WHERE k.kh_no = b.kh_no)
+                             AND k.state = ''1''
+                            GROUP BY k.kh_no
+                            HAVING add_months(MAX(l.ls04),6) < SYSDATE;
+                            insert into t_khls(khls_no,kh_no,khls09) values(khlsNo,khNo,ordertime);
+                         end;'
+                         ,
+       program_type => 'plsql_block',
+       enabled => TRUE
+  );
+END;
+
+//创建工作,按计划执行程序
+BEGIN
+  dbms_scheduler.create_job(
+       job_name => 'job1',
+       program_name => 'program1',
+       schedule_name => 'schedule1',
+       ENABLED => TRUE
+  );
+END;
