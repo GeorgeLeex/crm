@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <c3p0-config>
 	<default-config name="dataSource">
-		<property name="user">crm</property>
-		<property name="password">123</property>
-		<property name="driverClass">oracle.jdbc.driver.OracleDriver</property>
-		<property name="jdbcUrl">jdbc:oracle:thin:@10.25.112.46:1521:orcl</property>
+		<property name="user">root</property>
+		<property name="password">root</property>
+		<property name="driverClass">com.mysql.jdbc.Driver</property>
+		<property name="jdbcUrl">jdbc:mysql://localhost:3306/crm</property>
 	</default-config>
 </c3p0-config>

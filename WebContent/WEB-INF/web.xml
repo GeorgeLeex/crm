@@ -9,7 +9,7 @@
     <welcome-file>default.htm</welcome-file>
     <welcome-file>default.jsp</welcome-file>
   </welcome-file-list>
-  <servlet>
+  <!-- <servlet>
     <description></description>
     <display-name>main</display-name>
     <servlet-name>main</servlet-name>
@@ -18,5 +18,5 @@
   <servlet-mapping>
     <servlet-name>main</servlet-name>
     <url-pattern>/main</url-pattern>
-  </servlet-mapping>
+  </servlet-mapping> -->
 </web-app>
