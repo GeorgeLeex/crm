@@ -98,7 +98,7 @@ public class UserService extends JdbcSupport {
 	 * @throws Exception
 	 */
 	private boolean addUser() throws Exception{
-		String sql = "INSERT INTO t_us(us_no, name, us03, us_name, us_pwd) VALUES(seq_us_no.nextval,?,?,?,?)";
+		String sql = "INSERT INTO t_us(name, us03, us_name, us_pwd) VALUES(?,?,?,?)";
 		Object[] values = {
 				//姓名, 身份, 登录名, 登录密码
 				this.getVal("name"), this.getVal("us03"), this.getVal("us_name"), this.getVal("us_pwd")

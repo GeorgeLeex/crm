@@ -154,7 +154,7 @@ public class GoodsService extends JdbcSupport {
 		};
 		this.addPreparedStatement(sql1.toString(), values1);
 		//编写添加至存放记录表的sql语句
-		String sql2 = "INSERT INTO t_cf(cf_no, sp_no, hw_no, cf04) VALUES(seq_cf_no.nextval, ?, ?, ?)";
+		String sql2 = "INSERT INTO t_cf(sp_no, hw_no, cf04) VALUES(?, ?, ?)";
 		Object[] values2 = {
 				//商品编号, 货位编号, 数量
 				sp_no, this.getVal("hw_no"), this.getVal("cf04")

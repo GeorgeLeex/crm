@@ -489,23 +489,10 @@ public abstract class JdbcSupport implements BaseService{
 		
 		//计算起始索引
 		int beginIndex = (nowPage - 1) * numbers;
-		//计算结束索引
-		int endIndex = nowPage * numbers;
 
 		//分页sql语句头部分
-    	StringBuilder sql = new StringBuilder()
-    	.append("SELECT b.*")
-		.append("  FROM (")
-		.append("       SELECT a.*,rownum r")
-		.append("       FROM (");
-    	//拼接内部查询语句
-    	sql.append(inSql);
-    	//拼接sql语句尾部, 对rownum边界值部分的确定
-    	sql
-    	.append("            )a")
-		.append("         WHERE rownum <= ?")
-		.append("       )b")
-		.append("    WHERE b.r > ?");
+    	StringBuilder sql = new StringBuilder(inSql);
+    	sql.append(" LIMIT ?,?");
     	//将值数组进行合并,将内部sql语句的值数组合并至值集合
     	List<Object> values = new ArrayList<Object>();
     	if (args != null && args.length > 0) {
@@ -514,8 +501,8 @@ public abstract class JdbcSupport implements BaseService{
         	}
     	}
     	//将rownum边界值的?占位符的值添加至值集合
-    	values.add(endIndex);
     	values.add(beginIndex);
+    	values.add(numbers);
     	//获取查询结果
     	List<Map<String, Object>> result = this.multipleQuery(sql.toString(), values.toArray());
     	//将所有的数据添入Map集合返回

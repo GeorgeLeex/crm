@@ -19,7 +19,7 @@ public class CustomerLossService extends JdbcSupport {
 	public Map<String, Object> queryForMap() throws Exception {
 		//编写sql语句
 		StringBuilder sql = new StringBuilder()
-		.append("SELECT kl.khls_no, k.kh_no,  k.kh02, u.name, to_char(kl.khls09, 'yyyy-mm-dd hh24:mi:ss') khls09, kl.khls05")
+		.append("SELECT kl.khls_no, k.kh_no,  k.kh02, u.name, khls09, kl.khls05")
 		.append("  FROM t_khls kl, t_kh k, t_us u")
 		.append(" WHERE kl.kh_no = k.kh_no")
 		.append("   AND k.us_no = u.us_no")
@@ -42,9 +42,9 @@ public class CustomerLossService extends JdbcSupport {
 		.append("    AND  k.us_no = u.us_no");
 		//编写查询流失纪录信息的SQL语句
 		StringBuilder sql2 = new StringBuilder()
-		.append("SELECT kl.khls_no, k.kh02, u.name, to_char(kl.khls09, 'yyyy-mm-dd hh24:mi:ss') khls09, ")
-		.append("       to_char(kl.khls04, 'yyyy-mm-dd hh24:mi:ss') khls04, ")
-		.append("       decode(kl.khls06,'0','暂缓流失','1','确认流失','') khls06")
+		.append("SELECT kl.khls_no, k.kh02, u.name, khls09, ")
+		.append("       khls04, ")
+		.append("      	CASE kl.khls06 WHEN '0' THEN '暂缓流失' WHEN '1' THEN '确认流失' ELSE '' END AS khls06")
 		.append("  FROM t_khls kl, t_kh k, t_us u")
 		.append(" WHERE kl.kh_no = k.kh_no")
 		.append("   AND k.us_no = u.us_no");
@@ -96,7 +96,7 @@ public class CustomerLossService extends JdbcSupport {
 	 */
 	private boolean SureCustomerLoss() throws Exception{
 		//编写添加客户流失原因和修改客户流失状态的SQL语句
-		String sql1 = "UPDATE t_khls SET khls04 = sysdate, khls06 = '1', khls07 = ? WHERE khls_no = ?";
+		String sql1 = "UPDATE t_khls SET khls04 = now(), khls06 = '1', khls07 = ? WHERE khls_no = ?";
 		Object[] args1 = {
 			//获取客户流失原因
 			this.getVal("khls07"),

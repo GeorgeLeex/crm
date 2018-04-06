@@ -20,7 +20,7 @@ public class CommuRecordService extends JdbcSupport {
 	@Override
 	public Map<String, Object> queryForMap() throws Exception {
 		StringBuilder sql = new StringBuilder()
-		.append("SELECT jw_no, kh_no, kh02, to_char(jw03, 'yyyy-mm-dd hh24:mi:ss') jw03, jw04, jw05, jw06,")
+		.append("SELECT jw_no, kh_no, kh02, jw03, jw04, jw05, jw06,")
 		.append("jw07, state FROM v_jw WHERE jw_no = ?");
 		return this.singleQuery(sql.toString(), this.getVal("jw_no"));
 	}
@@ -39,7 +39,7 @@ public class CommuRecordService extends JdbcSupport {
 		.append("SELECT count(jw_no) rowcount FROM t_jw WHERE state = '1' AND kh_no = ").append(khNo);
 		//编写内部查询语句
 		StringBuilder sql = new StringBuilder()
-		.append("SELECT jw_no, kh_no, kh02, to_char(jw03, 'yyyy-mm-dd hh24:mi:ss') jw03, jw04, jw05, jw06,")
+		.append("SELECT jw_no, kh_no, kh02, jw03, jw04, jw05, jw06,")
 		.append("jw07, state FROM v_jw WHERE state = '1' AND kh_no = ?");
 		//传递参数进行分页数据查询
 		Map<String, Object> resultMap = this.paging(completedSql.toString(), sql.toString(), this.getVal("kh_no"));
@@ -87,7 +87,7 @@ public class CommuRecordService extends JdbcSupport {
 	 */
 	private boolean modifyCommuRecord() throws Exception {
 		StringBuilder sql = new StringBuilder()
-		.append("UPDATE t_jw SET jw03 = to_date(?, 'yyyy/mm/dd hh24:mi:ss'), jw04 = ?, ")
+		.append("UPDATE t_jw SET jw03 = ?, jw04 = ?, ")
 		.append(" jw05 = ?, jw06 = ?, jw07 = ? WHERE jw_no = ?");
 		Object[] args = {
 				this.getVal("jw03"), this.getVal("jw04"), this.getVal("jw05"), 
@@ -103,8 +103,8 @@ public class CommuRecordService extends JdbcSupport {
 	 */
 	private boolean addCommuRecord() throws Exception {
 		StringBuilder sql = new StringBuilder()
-		.append(" INSERT INTO t_jw (jw_no, kh_no, jw03, jw04, jw05, jw06, jw07)")
-		.append(" VALUES(seq_jw_no.nextval, ?, to_date(?, 'yyyy/mm/dd hh24:mi:ss'), ?, ?, ?, ?)");
+		.append(" INSERT INTO t_jw (kh_no, jw03, jw04, jw05, jw06, jw07)")
+		.append(" VALUES(?, ?, ?, ?, ?, ?)");
 		Object[] args = {
 				this.getVal("kh_no"), this.getVal("jw03"), this.getVal("jw04"), 
 				this.getVal("jw05"), this.getVal("jw06"), this.getVal("jw07")

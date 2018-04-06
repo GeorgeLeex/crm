@@ -138,7 +138,7 @@ public class AccessService extends JdbcSupport {
 		};
 		this.addPreparedStatement(sql1.toString(), values1);
 		StringBuilder sql2 = new StringBuilder()
-		.append("INSERT INTO t_access(t_no, m_no, ident) VALUES(seq_t_access_no.nextval, ?, ?)");
+		.append("INSERT INTO t_access(m_no, ident) VALUES(?, ?)");
 		String[] array = this.getValForArray("ident");
 		StringBuilder ident = new StringBuilder();
 		for (int i = 0; i < array.length; i++) {

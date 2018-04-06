@@ -22,7 +22,7 @@ public class OrderService extends JdbcSupport {
 		Object lsNo = this.getVal("ls_no");
 		//查询历史订单的sql语句
 		StringBuilder sql1 = new StringBuilder()
-		.append("SELECT t.ls_no, to_char(t.ls04, 'yyyy-mm-dd hh24:mi:ss') ls04, t.ls05, t.ls06, j.jy_name , s.dd07")
+		.append("SELECT t.ls_no, ls04, t.ls05, t.ls06, j.jy_name , s.dd07")
 		.append("		    FROM t_ls t, t_jy j, (SELECT ls_no,SUM(dd07) dd07 FROM t_dd GROUP BY ls_no) s ")
 		.append("		  WHERE  t.jy_no = j.jy_no")
 		.append("        AND  t.ls_no = s.ls_no")
@@ -59,7 +59,7 @@ public class OrderService extends JdbcSupport {
 		.append("SELECT count(ls_no) rowcount FROM t_ls WHERE state = '1' AND kh_no = ").append(kh_no);
 		//编写内部查询语句
 		StringBuilder sql = new StringBuilder()
-		.append("SELECT kh_no, kh02, ls_no, to_char(ls04, 'yyyy-mm-dd hh24:mi:ss') ls04, ls05, jy_name")
+		.append("SELECT kh_no, kh02, ls_no, ls04, ls05, jy_name")
 		.append("    FROM v_ls")
 		.append("  WHERE  state = '1'")
 		.append("   AND   kh_no = ?")

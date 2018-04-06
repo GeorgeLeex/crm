@@ -117,8 +117,8 @@ public class DictionaryService extends JdbcSupport {
 	 */
 	private boolean addDictionary() throws Exception{
 		StringBuilder sql = new StringBuilder()
-		.append("INSERT INTO t_zd(zd_no, zd_class, zd_name, zd_value, zd_bj)")
-		.append(" VALUES(seq_zd_no.nextval, ?, ?, ?, ?)");
+		.append("INSERT INTO t_zd(d_class, zd_name, zd_value, zd_bj)")
+		.append(" VALUES(?, ?, ?, ?)");
 		List<Object> values = new ArrayList<>();
 		//添加条目类别
 		values.add(this.getVal("zd_class"));

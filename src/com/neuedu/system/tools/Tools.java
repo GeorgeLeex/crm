@@ -177,7 +177,7 @@ public class Tools {
             	//MySQL
                 //sql2 = "INSERT INTO sequence (svalue, sname, stime) VALUES(?, ?, CURRENT_DATE)";
             	//oracle
-            	sql2 = "INSERT INTO sequence (sno, svalue, sname) VALUES(seq_sequence_sno.nextval,?, ?)";
+            	sql2 = "INSERT INTO sequence (svalue, sname) VALUES(?, ?)";
             }
             p2 = DBUtils.prepareStatement(sql2);
             p2.setObject(1, ++sequenceId);
